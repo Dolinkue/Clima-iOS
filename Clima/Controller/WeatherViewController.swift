@@ -30,6 +30,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         print(searchTextFiedl.text!)
         
         
+        
     }
     // aca se le dice a la aplicacion que el usuario apreto el boton de buscar o regresar
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
