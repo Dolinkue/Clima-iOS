@@ -8,11 +8,16 @@
 
 import Foundation
 
+protocol WeatherManagerDelegate {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailWithError(error: Error)
+}
+
 struct WeatherManager{
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?&appid=4227ede7bf3a3abaa9ff3cc467b3ea15&units=metric"
     
     
-    
+    var delegate: WeatherManagerDelegate?
     
     func fetchWeather (cityName: String) {
         let urlString = "\(weatherUrl)&q=\(cityName)"
@@ -35,12 +40,14 @@ struct WeatherManager{
             
             let task = session.dataTask(with: url) { (data , response , error ) in
                 if error != nil{
-                    print(error!)
+                    delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let safeData = data {
-                    parseJSON(weatherData: safeData)
+                    if let weather = parseJSON(safeData){
+                        self.delegate?.didUpdateWeather(self, weather: weather)
+                    }
                     
                 }
             }
@@ -49,41 +56,26 @@ struct WeatherManager{
             task.resume()
        }
     }
-    func parseJSON (weatherData: Data){
+    func parseJSON (_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         do {
             let decodeData = try decoder.decode(WeatherData.self, from: weatherData)
-            print(decodeData.main.temp)
             let id = decodeData.weather[0].id
-            print (getConditionName(weatehrID: id))
+            let temp = decodeData.main.temp
+            let name = decodeData.name
+            
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
+            return weather
             
         }catch {
-            print(error)
+            delegate?.didFailWithError(error: error)
+            return nil
         }
     }
-    func getConditionName(weatehrID: Int) -> String {
-        
-        switch weatehrID {
-        case 200...299:
-            return "cloud.bolt"
-        case 300...399:
-            return "cloud.drizzle"
-        case 500...599:
-            return "cloud.rain"
-        case 600...699:
-            return "cloud.snow"
-        case 700...799:
-            return "cloud.fog"
-        case 800:
-            return "sun.max"
-        case 801...899:
-            return "cloud.bolt"
-        default:
-            return "cloud"
-        }
+    
         
         
         
         
-    }
+    
 }

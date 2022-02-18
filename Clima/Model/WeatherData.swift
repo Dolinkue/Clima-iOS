@@ -8,7 +8,7 @@
 
 import Foundation
 // decorable es por la info que viene de afuera en este caso JSON
-struct WeatherData: Decodable {
+struct WeatherData: Codable {
     let name: String
     let main: Main
     let weather: [Weather]
@@ -16,13 +16,13 @@ struct WeatherData: Decodable {
     
 }
 
-struct Main: Decodable{
+struct Main: Codable {
     let temp: Double
 }
 
-struct Weather: Decodable{
+struct Weather: Codable {
     let id: Int
 }
-struct Wind: Decodable {
+struct Wind: Codable {
     let speed: Double
 }
