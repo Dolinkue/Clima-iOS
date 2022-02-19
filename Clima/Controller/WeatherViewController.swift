@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -25,6 +25,13 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         searchTextFiedl.delegate = self
     }
 
+//MARK: - UItextFielDelegate
+    
+
+}
+
+extension WeatherViewController: UITextFieldDelegate {
+    
     @IBAction func searchPressed(_ sender: UIButton) {
         
         searchTextFiedl.endEditing(true)// aca sacamos el teclado
@@ -62,6 +69,11 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         
         searchTextFiedl.text = ""
     }
+}
+
+//MARK: - WeatherManagerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async {
@@ -75,4 +87,3 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         print(error)
     }
 }
-
