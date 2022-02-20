@@ -45,7 +45,7 @@ class WeatherViewController: UIViewController {
                 locationManager.stopUpdatingLocation()
                 let lat = location.coordinate.latitude
                 let lon = location.coordinate.longitude
-                weatherManager.fetchWeather(cityName: "", latitud: lat, long: lon)
+                weatherManager.fetchWeather(latitud: lat, long: lon)
                 print(lat)
                 print(lon)
                 
@@ -96,7 +96,7 @@ extension WeatherViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         if let city = searchTextFiedl.text { // para salavar el optional nil
-            weatherManager.fetchWeather(cityName: city, latitud: 0.0, long: 0.0)
+            weatherManager.fetchWeather(cityName: city)
         }
         
         searchTextFiedl.text = ""

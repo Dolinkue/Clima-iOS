@@ -19,10 +19,15 @@ struct WeatherManager{
     
     var delegate: WeatherManagerDelegate?
     
-    func fetchWeather (cityName: String, latitud: Double, long: Double) {
-        let urlString = "\(weatherUrl)&q=\(cityName)&lat=\(latitud)&lon=\(long)"
+    func fetchWeather (cityName: String) {
+        let urlString = "\(weatherUrl)&q=\(cityName)"
         performRequest(urlString: urlString) // devolviendo el urlstring lo pasamos a la otra funcions
         print(urlString)
+    }
+    func fetchWeather (latitud: Double, long: Double) {
+            let urlString = "\(weatherUrl)&lat=\(latitud)&lon=\(long)"
+            performRequest(urlString: urlString) // devolviendo el urlstring lo pasamos a la otra funcions
+            print(urlString)
         
     
     }
