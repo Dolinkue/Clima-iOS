@@ -7,23 +7,55 @@
 //
 
 import UIKit
+import CoreLocation
 
 class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
-    
     @IBOutlet weak var searchTextFiedl: UITextField!
     
+    
     var weatherManager = WeatherManager()
+    let locationManager = CLLocationManager() // para activar el gps en la localizacion
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization() // pedir permiso para usar el gps
+        locationManager.requestLocation()
+        
+        
         weatherManager.delegate = self
         searchTextFiedl.delegate = self
     }
+    
+    @IBAction func currentLocation(_ sender: UIButton) {
+        locationManager.requestLocation()
+    }
+    
+}
+
+
+    extension WeatherViewController : CLLocationManagerDelegate {
+        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+            if let location = locations.last {
+                locationManager.stopUpdatingLocation()
+                let lat = location.coordinate.latitude
+                let lon = location.coordinate.longitude
+                weatherManager.fetchWeather(cityName: "", latitud: lat, long: lon)
+                print(lat)
+                print(lon)
+                
+            }
+        }
+        func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+            print("Failed to get users location.")
+        }
+    
+    
 
 //MARK: - UItextFielDelegate
     
@@ -64,7 +96,7 @@ extension WeatherViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         if let city = searchTextFiedl.text { // para salavar el optional nil
-            weatherManager.fetchWeather(cityName: city)
+            weatherManager.fetchWeather(cityName: city, latitud: 0.0, long: 0.0)
         }
         
         searchTextFiedl.text = ""
@@ -79,6 +111,7 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
         }
         
     }
